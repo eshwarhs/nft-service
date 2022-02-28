@@ -1,0 +1,127 @@
+service: NFTService
+
+provider:
+  name: aws
+  stage: nft
+  runtime: nodejs12.x
+  profile: default
+  timeout: 30
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+        - "sqs:*"
+      Resource: "*"
+
+plugins:
+  - serverless-plugin-common-excludes
+  - serverless-plugin-include-dependencies
+
+
+functions:
+  listAllNFTs:
+    handler: listAllNFTs.listAllNFTs
+    name: ListAllNFTs
+    memorySize: 256
+    events:
+      - http:
+            path: /list
+            method: get
+  getNFTDetails:
+    handler: getNFTDetails.getNFTDetails
+    name: GetNFTDetails
+    memorySize: 256
+    events:
+      - http:
+            path: /{nftId}
+            method: get
+            cors: true
+            request: 
+              parameters: 
+                paths: 
+                  nftId: true
+      - http:
+            path: /
+            method: get
+            cors: true
+  createNFT:
+    handler: createNFT.createNFT
+    name: CreateNFT
+    memorySize: 256
+    events:
+      - http:
+            path: /
+            method: post
+            cors: true
+  deleteNFT:
+    handler: deleteNFT.deleteNFT
+    name: DeleteNFT
+    memorySize: 256
+    events:
+      - http:
+            path: /{nftId}
+            method: delete
+            cors: true
+            request: 
+              parameters: 
+                paths: 
+                  nftId: true
+  claimNFT:
+    handler: claimNFT.claimNFT
+    name: ClaimNFT
+    memorySize: 256
+    events:
+      - http:
+            path: /{nftId}/claim/{claimToken}
+            method: get
+            cors: true
+            request: 
+              parameters: 
+                paths: 
+                  nftId: true
+                  claimToken: true
+      - http:
+            path: /{nftId}/claim
+            method: get
+            cors: true
+  sendNFT:
+    handler: sendNFT.sendNFT
+    name: SendNFT
+    memorySize: 256
+    events:
+      - http:
+            path: /{nftId}/send
+            method: post
+            cors: true
+            request: 
+              parameters: 
+                paths: 
+                  nftId: true
+  giftNFT:
+    handler: giftNFT.giftNFT
+    name: GiftNFT
+    memorySize: 256
+    events:
+      - http:
+            path: /{nftId}/gift
+            method: post
+            cors: true
+            request: 
+              parameters: 
+                paths: 
+                  nftId: true
+  # updateNFT:
+  #   handler: updateNFT.updateNFT
+  #   name: UpdateNFT
+  #   memorySize: 256
+  #   events:
+  #     - http:
+  #           path: /{nftId}
+  #           method: put
+  #           cors: true
+  #           request: 
+  #             parameters: 
+  #               paths: 
+  #                 nftId: true
+
